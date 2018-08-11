@@ -8,6 +8,7 @@ require('chai')
     .should();
 
 const Main = artifacts.require("Main");
+const CrystalBase = artifacts.require("CrystalBase");
 
 contract("Main", async (accounts) => {
     beforeEach(async function () {
@@ -39,6 +40,14 @@ contract("Main", async (accounts) => {
             result.logs[0].args.createdAt.should.be.bignumber.above(0);
         });
     });
+
+    describe('postTip', function() {
+        it('posts tip', async function() {
+            await this.instance.createRoom(this.room_id);
+            const crystal = await CrystalBase.new();
+            await this.instance.postTip(this.room_id, crystal.address, 1);
+        });
+    })
 
     describe('getMessages', function () {
         it('get messages', async function () {

@@ -53,6 +53,10 @@ contract ERC721Metadata is ERC721Basic {
 contract ERC721 is ERC721Basic, ERC721Enumerable, ERC721Metadata {
 }
 
+contract CrystalBaseIF is ERC721 {
+    function _transferFrom(address _from, address _to, uint256 _tokenId) public;
+}
+
 contract Main {
     struct Room {
         address owner;
@@ -64,8 +68,8 @@ contract Main {
         address owner;
         string text;
         uint256 createdAt;
-        ERC721 erc721token;
-        uint256 tokens;
+        CrystalBaseIF crystal;
+        uint256 tokenId;
     }
 
     mapping(uint256 => Room) internal rooms;
@@ -100,17 +104,18 @@ contract Main {
         emit PostMessage(_room_id, msg.sender, 0, _text, now);
     }
 
-    function postTip(uint256 _room_id, ERC721 _ERC721Token, uint256 tokens) external {
+    function postTip(uint256 _room_id, CrystalBaseIF _crystal, uint256 tokenId) external {
         require(rooms[_room_id].createdAt > 0, "room not found");
-        require(tokens > 0, "tokens is 0");
+        require(tokenId > 0, "tokens is 0");
 
         Message memory _message;
         _message.kind = 1;
         _message.owner = msg.sender;
-        _message.erc721token = _ERC721Token;
-        _message.tokens = tokens;
+        _message.crystal = _crystal;
+        _message.tokenId = tokenId;
         _message.createdAt = now;
 
+        _crystal._transferFrom(msg.sender, rooms[_room_id].owner, tokenId);
         messages[_room_id].push(_message);
     }
 
@@ -129,8 +134,8 @@ contract Main {
         address[] owner,
         bytes32[] text,
         uint256[] createdAt,
-        ERC721[] erc721token,
-        uint256[] tokens
+        CrystalBaseIF[] crystal,
+        uint256[] tokenId
     ) {
 
         require(rooms[_room_id].createdAt > 0, "room not found");
@@ -141,16 +146,16 @@ contract Main {
         owner = new address[](_len);
         text = new bytes32[](_len);
         createdAt = new uint256[](_len);
-        erc721token = new ERC721[](_len);
-        tokens = new uint256[](_len);
+        crystal = new CrystalBaseIF[](_len);
+        tokenId = new uint256[](_len);
 
         for(uint256 i = 0; i < _len; i++) {
             kind[i] = messages[_room_id][i].kind;
             owner[i] = messages[_room_id][i].owner;
             text[i] = s2b(messages[_room_id][i].text);
             createdAt[i] = messages[_room_id][i].createdAt;
-            erc721token[i] = messages[_room_id][i].erc721token;
-            tokens[i] = messages[_room_id][i].tokens;
+            crystal[i] = messages[_room_id][i].crystal;
+            tokenId[i] = messages[_room_id][i].tokenId;
         }
     }
 
