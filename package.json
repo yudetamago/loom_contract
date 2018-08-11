@@ -17,10 +17,13 @@
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
     "dotenv": "^6.0.0",
+    "loom-truffle-provider": "^0.5.0",
     "solhint": "^1.2.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy:reset": "truffle deploy --reset --network loom_dapp_chain",
+    "deploy": "truffle deploy --network loom_dapp_chain"
   },
   "repository": {
     "type": "git",
