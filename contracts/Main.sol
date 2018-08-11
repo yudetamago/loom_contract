@@ -134,7 +134,7 @@ contract Main {
         address[] owner,
         bytes32[] text,
         uint256[] createdAt,
-        CrystalBaseIF[] crystal,
+        //address[] crystal,
         uint256[] tokenId
     ) {
 
@@ -146,7 +146,7 @@ contract Main {
         owner = new address[](_len);
         text = new bytes32[](_len);
         createdAt = new uint256[](_len);
-        crystal = new CrystalBaseIF[](_len);
+        //crystal = new address[](_len);
         tokenId = new uint256[](_len);
 
         for(uint256 i = 0; i < _len; i++) {
@@ -154,7 +154,7 @@ contract Main {
             owner[i] = messages[_room_id][i].owner;
             text[i] = s2b(messages[_room_id][i].text);
             createdAt[i] = messages[_room_id][i].createdAt;
-            crystal[i] = messages[_room_id][i].crystal;
+            //crystal[i] = address(messages[_room_id][i].crystal);
             tokenId[i] = messages[_room_id][i].tokenId;
         }
     }
