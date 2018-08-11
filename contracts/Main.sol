@@ -75,15 +75,15 @@ contract Main {
     event CreateRoom(address indexed owner, uint256 id, uint256 createdAt);
     event PostMessage(uint256 indexed _room_id, address indexed owner, uint256 kind, string text, uint256 createdAt);
 
-    function createRoom() external returns(uint256) {
-        uint256 _id = current_room_id;
+    function createRoom(uint256 _id) external returns(uint256) {
+        //uint256 _id = current_room_id;
         Room memory _room = Room({
             owner: msg.sender,
             createdAt: now
         });
         rooms[_id] = _room;
         emit CreateRoom(msg.sender, _id, now);
-        current_room_id = current_room_id + 1;
+        //current_room_id = current_room_id + 1;
         return _id;
     }
 
@@ -114,10 +114,20 @@ contract Main {
         messages[_room_id].push(_message);
     }
 
+    function getRoom(uint256 _room_id) external view returns(
+        address owner,
+        uint256 createdAt
+    ) {
+        require(rooms[_room_id].createdAt > 0, "room not found");
+
+        owner = rooms[_room_id].owner;
+        createdAt = rooms[_room_id].createdAt;
+    }
+
     function getMessages(uint256 _room_id) external view returns(
         uint256[] kind,
         address[] owner,
-        //string[] text,
+        bytes32[] text,
         uint256[] createdAt,
         ERC721[] erc721token,
         uint256[] tokens
@@ -129,7 +139,7 @@ contract Main {
 
         kind = new uint256[](_len);
         owner = new address[](_len);
-        //text = new string[](_len);
+        text = new bytes32[](_len);
         createdAt = new uint256[](_len);
         erc721token = new ERC721[](_len);
         tokens = new uint256[](_len);
@@ -137,10 +147,22 @@ contract Main {
         for(uint256 i = 0; i < _len; i++) {
             kind[i] = messages[_room_id][i].kind;
             owner[i] = messages[_room_id][i].owner;
-            //text[i] = rooms[_room_id][i].text;
+            text[i] = s2b(messages[_room_id][i].text);
             createdAt[i] = messages[_room_id][i].createdAt;
             erc721token[i] = messages[_room_id][i].erc721token;
             tokens[i] = messages[_room_id][i].tokens;
         }
+    }
+
+    function s2b(string s) internal pure returns (bytes32) {
+        bytes memory b = bytes(s);
+        uint r = 0;
+        for (uint i = 0; i < 32; i++) {
+            if (i < b.length) {
+                r = r | uint(b[i]);
+            }
+            if (i < 31) r = r * 256;
+        }
+        return bytes32(r);
     }
 }
