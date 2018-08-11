@@ -73,7 +73,7 @@ contract Main {
     uint56 current_room_id = 0;
 
     event CreateRoom(address indexed owner, uint256 id, uint256 createdAt);
-    event PostMessage(uint256 indexed _room_id, address indexed owner, uint256 kind, string text, uint256 createdAt);
+    event PostMessage(uint256 indexed room_id, address indexed owner, uint256 kind, string text, uint256 createdAt);
 
     function createRoom(uint256 _id) external returns(uint256) {
         //uint256 _id = current_room_id;
